@@ -17,7 +17,14 @@ export const createUnsecuredUserInformation = (user: User) => ({
 });
 
 export const createTokenForUser = (user: User) => {
-  return jwt.sign(user, process.env.JWT_SECRET);
+  return jwt.sign(user, process.env.JWT_SECRET as string);
+
+  //   jwt.sign(data, process.env.SIGNATURE_KEY as string, {
+  //     expiresIn: '30d',
+  //     algorithm: "HS256"
+  // }, (err, encoded)=>{
+  //     err ? reject(err) : resolve(encoded)
+  // })
 };
 
 const jwtInfoSchema = z.object({
@@ -28,7 +35,9 @@ const jwtInfoSchema = z.object({
 export const getDataFromAuthToken = (token?: string) => {
   if (!token) return null;
   try {
-    return jwtInfoSchema.parse(jwt.verify(token, process.env.JWT_SECRET));
+    return jwtInfoSchema.parse(
+      jwt.verify(token, process.env.JWT_SECRET as string)
+    );
   } catch (e) {
     console.log(e);
     return null;
@@ -41,7 +50,6 @@ export const authMiddleware = async (
   next: NextFunction
 ) => {
   const [, token] = req.headers.authorization?.split?.(" ") || [];
-
   const myJwtData = getDataFromAuthToken(token);
   if (!myJwtData) {
     return res.status(401).json({ message: "invalid Token" });
@@ -56,7 +64,6 @@ export const authMiddleware = async (
   if (!userFromJwt) {
     return res.status(401).json({ message: "user not found" });
   }
-  res.cookie("token", "token");
-  req.body.user = userFromJwt;
+  // req.user = userFromJwt;
   next();
 };

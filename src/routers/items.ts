@@ -69,7 +69,7 @@ itemsRouter.delete("/:id", authMiddleware, async (req, res) => {
 
 itemsRouter.post(
   "/",
-
+  authMiddleware,
   validateRequest({
     body: z.object({
       image: z.string().optional(),
@@ -98,7 +98,7 @@ itemsRouter.post(
 
 itemsRouter.patch(
   "/:id",
-
+  authMiddleware,
   validateRequest({
     body: z.object({
       image: z.string().optional(),

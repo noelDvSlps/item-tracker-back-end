@@ -3,6 +3,7 @@ import { z } from "zod";
 import { validateRequest } from "zod-express-middleware";
 import { prisma } from "../prisma";
 import { parseable } from "../helper";
+import { authMiddleware } from "../auth-utils";
 
 const itemsHistoryRouter = Router();
 
@@ -49,6 +50,7 @@ itemsHistoryRouter.delete("/:id", async (req, res) => {
 
 itemsHistoryRouter.post(
   "/",
+  authMiddleware,
   validateRequest({
     body: z.object({
       user_Id: z.number(),
